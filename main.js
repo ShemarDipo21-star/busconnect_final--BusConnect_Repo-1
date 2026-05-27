@@ -373,7 +373,7 @@ function submitRegistration(event) {
       const form = document.getElementById('register-form');
       if (form) form.style.pointerEvents = 'none';
 
-      const response = await fetch(`${API_BASE_URL}/api/register-driver`, {
+      const response = await fetch(`${API_BASE_URL}/api/drivers/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(registrationData)
@@ -660,7 +660,7 @@ function updateBusMarker(lat, lng) {
       map:      trackerMap,
       title:    'Schoolbus — BusConnect',
       icon: {
-        url:        'buslogo.png',
+        url:        'img/buslogo.png',
         scaledSize: new google.maps.Size(44, 44),
         anchor:     new google.maps.Point(22, 22)
       },
@@ -863,8 +863,8 @@ function sendBrowserNotification(title, body) {
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(title, {
       body,
-      icon: 'buslogo.png',
-      badge: 'buslogo.png'
+      icon: 'img/buslogo.png',
+      badge: 'img/buslogo.png'
     });
   }
 }

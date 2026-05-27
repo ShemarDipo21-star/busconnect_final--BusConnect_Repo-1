@@ -66,6 +66,3 @@ CREATE TABLE IF NOT EXISTS admins (
     password VARCHAR(255) NOT NULL
 );
 
-
-INSERT INTO admins (email, password) VALUES ('admin@busconnect', SHA2('admin123', 256))
-ON DUPLICATE KEY UPDATE email=email;

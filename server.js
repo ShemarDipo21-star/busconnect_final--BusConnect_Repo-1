@@ -5,7 +5,6 @@ require('dotenv').config();
 const express    = require('express');
 const cors       = require('cors');
 const mysql      = require('mysql2');
-const { MailtrapClient } = require('mailtrap');
 const http       = require('http');
 const { Server } = require('socket.io');
 const path       = require('path');
@@ -87,17 +86,10 @@ function initDatabase() {
     });
 }
 
-// ── MAILTRAP ──────────────────────────────────────────────────
-let client = null;
-if (process.env.MAILTRAP_TOKEN) {
-    client = new MailtrapClient({ token: process.env.MAILTRAP_TOKEN });
-}
-
 // ── SOCKET.IO — REALTIME BUS TRACKER ─────────────────────────
 const activeBuses = new Map();
 
 io.on('connection', socket => {
-    // Send current bus statuses to newly connected client
     activeBuses.forEach((bus, busId) => {
         socket.emit('bus:status', { busId, online: true, driverName: bus.driverName });
     });
@@ -106,7 +98,7 @@ io.on('connection', socket => {
         const id = busId || socket.id;
         activeBuses.set(id, { socketId: socket.id, driverName, path: [] });
         io.emit('bus:status', { busId: id, online: true, driverName });
-        console.log(`Bus ${id} started tracking — chauffeur: ${driverName}`);
+        console.log(`Bus ${id} started tracking — driver: ${driverName}`);
     });
 
     socket.on('driver:location', ({ lat, lng, busId }) => {
@@ -141,20 +133,12 @@ io.on('connection', socket => {
     });
 });
 
-// ── API: Frontend configuratie (publieke sleutels) ───────────
+// ── API: Public config (maps key) ─────────────────────────────
 app.get('/api/config', (req, res) => {
     res.json({ mapsKey: process.env.GOOGLE_MAPS_KEY || '' });
 });
 
-// Mount authentication routes (JWT demo)
-try {
-    const authRoutes = require('./routes/auth')();
-    app.use('/api/auth', authRoutes);
-} catch (e) {
-    console.warn('Auth routes not available:', e && e.message);
-}
-
-// ── API: Bus status overview ──────────────────────────────────
+// ── API: Bus tracker status ───────────────────────────────────
 app.get('/api/tracker/status', (req, res) => {
     const buses = [];
     activeBuses.forEach((bus, busId) => {
@@ -163,114 +147,11 @@ app.get('/api/tracker/status', (req, res) => {
     res.json({ buses });
 });
 
-// ── API: Route history for a specific bus ─────────────────────
-app.get('/api/tracker/route/:busId', (req, res) => {
-    const { busId } = req.params;
-    const limit = Math.min(parseInt(req.query.limit) || 300, 1000);
-
-    db.query(
-        'SELECT latitude, longitude, recorded_at FROM bus_locations WHERE bus_id = ? ORDER BY recorded_at DESC LIMIT ?',
-        [busId, limit],
-        (err, rows) => {
-            if (err) return res.status(500).json({ success: false, error: err.message });
-            res.json({ success: true, points: rows.reverse() });
-        }
-    );
-});
-
-// ── API: Register driver ──────────────────────────────────────
-app.post('/api/register-driver', (req, res) => {
-    const {
-        voornaam, achternaam, email, telefoon, profile_photo_url,
-        rijbewijs, ervaring, voertuig, capaciteit, kentekenplaat,
-        bouwjaar, route, school, tijd_och, tijd_mid, dag, prijs, op_afhaal
-    } = req.body;
-
-    if (!voornaam || !achternaam || !email) {
-        return res.status(400).json({ success: false, error: 'Missing required fields' });
-    }
-
-    const sql = `
-        INSERT INTO drivers (
-            voornaam, achternaam, email, telefoon, profile_photo_url,
-            rijbewijs, ervaring, voertuig, capaciteit, kentekenplaat,
-            bouwjaar, route, school, tijd_och, tijd_mid, dag, prijs, op_afhaal
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    db.query(sql, [
-        voornaam, achternaam, email, telefoon, profile_photo_url,
-        rijbewijs, ervaring, voertuig, capaciteit, kentekenplaat,
-        bouwjaar, route, school, tijd_och, tijd_mid, dag, prijs, op_afhaal
-    ], (err, result) => {
-        if (err) {
-            if (err.code === 'ER_DUP_ENTRY') {
-                return res.status(409).json({ success: false, error: 'E-mailadres is al geregistreerd.' });
-            }
-            console.error('Register driver error:', err.message);
-            return res.status(500).json({ success: false, error: err.message });
-        }
-        res.json({ success: true, user_id: result.insertId });
-    });
-});
-
-// Example protected route using validation and auth middleware
-try {
-    const validate = require('./middlewares/validate');
-    const authMw   = require('./middlewares/auth');
-
-    app.post('/api/secure/contact', validate({ required: ['name', 'email', 'message'] }), (req, res) => {
-        // this demonstrates request validation; in production, also apply authMw where appropriate
-        res.json({ success: true, received: req.body });
-    });
-} catch (e) {
-    console.warn('Validation or auth middleware not available:', e && e.message);
-}
-
-// ── API: Get all drivers ──────────────────────────────────────
-app.get('/api/drivers', (req, res) => {
-    db.query('SELECT * FROM drivers ORDER BY created_at DESC', (err, rows) => {
-        if (err) return res.status(500).json({ success: false, error: err.message });
-        res.json(rows);
-    });
-});
-
-// ── API: Contact form ─────────────────────────────────────────
-app.post('/api/contact', async (req, res) => {
-    const { name, achternaam, email, subject, message } = req.body;
-
-    if (!name || !email || !message) {
-        return res.status(400).json({ success: false, error: 'Missing required fields' });
-    }
-
-    const sql = `
-        INSERT INTO contact_messages (
-            contact_name, contact_achternaam, contact_email, contact_subject, contact_message
-        ) VALUES (?, ?, ?, ?, ?)
-    `;
-
-    db.query(sql, [name, achternaam, email, subject, message], async err => {
-        if (err) {
-            console.error('Contact Database Error:', err);
-            return res.status(500).json({ success: false, error: 'DATABASE ERROR' });
-        }
-
-        if (client) {
-            try {
-                await client.send({
-                    from: { email: 'hello@demomailtrap.co', name: 'BusConnect Contact' },
-                    to:   [{ email: process.env.ADMIN_EMAIL }],
-                    subject: 'New Contact Message',
-                    text: `New message from:\n\nName: ${name} ${achternaam}\nEmail: ${email}\n\nMessage:\n${message}`
-                });
-            } catch (emailError) {
-                console.error('Admin Email Error:', emailError);
-            }
-        }
-
-        return res.json({ success: true });
-    });
-});
+// ── ROUTES ────────────────────────────────────────────────────
+app.use('/api/auth',    require('./routes/auth')());
+app.use('/api/drivers', require('./routes/drivers')(db));
+app.use('/api/contact', require('./routes/contact')(db));
+app.use('/api/tracker', require('./routes/tracker')(db));
 
 // ── START SERVER ──────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;

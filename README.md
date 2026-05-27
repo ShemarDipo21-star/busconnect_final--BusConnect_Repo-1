@@ -1,206 +1,278 @@
-# 🚌 BusConnect
+# BusConnect
 
-> **Suriname's #1 Schoolbus Platform** — Een webapplicatie die ouders en schoolbuschauffeurs veilig en overzichtelijk met elkaar verbindt.
+> **Suriname's #1 School Bus Platform** — A web application that connects parents and school bus drivers in a safe, transparent, and organized way.
 
 ---
 
-## 👥 Het Team — The Element 3
+## The Team — The Element 3
 
-| Studentnr. | Naam | Rol |
+| Student No. | Name | Role |
 |---|---|---|
-| 254011 | Ngaisa Basedie | Registratie, profiel & inlogpagina |
-| 254012 | Shriyanie Debi-tewari | Admin panel & systeembeheer |
-| 256015 | Darryl Kasandinomo | UI & Navigatie |
-| 255024 | Adney Dayen | Database, SQL & meldingen |
-| 256020 | Shemar Dipotaroeno | GPS, live tracker & locaties |
+| 254011 | Ngaisa Basedie | Registration, profile & login page |
+| 254012 | Shriyanie Debi-tewari | Admin panel & system management |
+| 256015 | Darryl Kasandinomo | UI & Navigation |
+| 255024 | Adney Dayen | Database, SQL & notifications |
+| 256020 | Shemar Dipotaroeno | GPS, live tracker & locations |
 
 **School:** UNASAT — Paramaribo, Suriname
-**Versie:** 1.0 | **Datum:** 29 april 2026
+**Version:** 1.0 | **Date:** April 29, 2026
 
 ---
 
-## 📋 Over het project
+## About the Project
 
-### Het probleem
-Ouders in Suriname vinden schoolbuschauffeurs via Facebook-groepen of mond-tot-mondreclame. Er is geen centrale, betrouwbare plek. Informatie over routes, ervaring en beschikbaarheid is moeilijk te verifiëren.
+### The Problem
+Parents in Suriname find school bus drivers through Facebook groups or word of mouth. There is no central, reliable place. Information about routes, experience, and availability is difficult to verify.
 
-### De oplossing
-BusConnect is een webapplicatie waar chauffeurs zich kunnen registreren met een profiel, en ouders beschikbare chauffeurs kunnen zoeken, filteren en direct contact opnemen. Uniek: een **live GPS tracker** zodat ouders in real-time de schoolbus kunnen volgen via Google Maps.
+### The Solution
+BusConnect is a web application where drivers can register with a profile, and parents can search, filter, and directly contact available drivers. A key feature is a **live GPS tracker** so parents can follow the school bus in real-time via Google Maps.
 
-### Doelstelling
-Een betrouwbaar, centraal platform voor schoolbusvervoer in Suriname — transparant, gebruiksvriendelijk en toegankelijk voor zowel ouders als chauffeurs.
+### Goal
+A reliable, central platform for school bus transport in Suriname — transparent, user-friendly, and accessible to both parents and drivers.
 
 ---
 
-## 🗂️ Taakverdeling
+## Technologies
 
-### 👤 Ngaisa Basedie — Registratie & Profiel
-| # | Taak |
+| Layer | Technology | Version |
+|---|---|---|
+| Frontend | HTML5, CSS3, JavaScript (Vanilla) | — |
+| Backend | Node.js + Express.js | ^5.2 |
+| Database | MySQL | 8.x |
+| Real-time | Socket.IO | ^4.7 |
+| Authentication | JSON Web Tokens (JWT) | ^9.0 |
+| Email | Mailtrap | ^4.6 |
+| Maps / GPS | Google Maps JavaScript API | — |
+| Environment | dotenv | ^17 |
+
+---
+
+## Requirements
+
+Make sure the following software is installed **before** starting the project:
+
+| Software | Minimum version | Download |
+|---|---|---|
+| Node.js | 18 LTS or higher | [nodejs.org](https://nodejs.org) |
+| npm | included with Node.js | — |
+| MySQL | 8.0 or higher | [mysql.com](https://dev.mysql.com/downloads/) |
+| Git | 2.x | [git-scm.com](https://git-scm.com) |
+| VS Code | Recommended editor | [code.visualstudio.com](https://code.visualstudio.com) |
+
+> **Tip:** Verify your versions with `node -v`, `npm -v`, and `mysql --version` in the terminal.
+
+---
+
+## Installation & Setup
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/<username>/busconnect.git
+cd busconnect
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+```bash
+# Copy the example file and fill in your own values
+cp .env.example .env
+```
+
+Open `.env` and fill in your database credentials, Mailtrap token, and Google Maps API key.
+
+### 4. Set up the database
+
+The server automatically creates the required tables on first startup. Just make sure your MySQL server is running and the database exists:
+
+```sql
+CREATE DATABASE IF NOT EXISTS busconnect;
+```
+
+### 5. Start the server
+```bash
+node server.js
+```
+
+Open your browser at `http://localhost:3000`
+
+---
+
+## Usage
+
+### As a Parent
+1. Go to `http://localhost:3000` in your browser.
+2. Browse available drivers on the **home page** — no account required.
+3. Filter by school, neighborhood, or availability using the search bar.
+4. Click a driver profile to view contact details and route information.
+5. Track the school bus live via the **GPS tab** once the driver is active.
+
+### As a Driver
+1. Click **Register** and create an account with your license information.
+2. Upload a profile photo and fill in your route and work experience.
+3. Enable GPS access in your browser to be tracked live.
+4. Receive requests from parents via email and confirm through the platform.
+
+### As an Admin
+1. Navigate to `/admin` and log in with the admin credentials.
+2. Manage drivers via the **Admin Panel** (create, view, edit, delete).
+3. Send notifications to drivers and monitor the live tracker.
+4. Automatically receive an email for every new driver registration.
+
+---
+
+## Task Breakdown
+
+### Ngaisa Basedie — Registration & Profile
+| # | Task |
 |---|---|
-| 1 | Chauffeurs kunnen zich registreren via een sign-in pagina |
-| 2 | Verplichte profielfoto upload bij registratie |
-| 3 | Chauffeurs kunnen persoonlijke gegevens invoeren en aanpassen |
-| 4 | Contactinfo zichtbaar maken voor ouders |
-| 5 | Route, werkervaring en rijbewijsinformatie toevoegen |
-| 6 | Chauffeurs kunnen hun profiel verwijderen |
+| 1 | Drivers can register via a sign-in page |
+| 2 | Mandatory profile photo upload during registration |
+| 3 | Drivers can enter and update personal information |
+| 4 | Contact info visible to parents |
+| 5 | Add route, work experience, and license information |
+| 6 | Drivers can delete their profile |
 
 ---
 
-### 🛡️ Shriyanie Debi-tewari — Admin & Systeembeheer
-| # | Taak |
+### Shriyanie Debi-tewari — Admin & System Management
+| # | Task |
 |---|---|
-| 1 | Admin inlogpagina |
-| 2 | Chauffeurs beheren (CRUD: aanmaken, bekijken, aanpassen, verwijderen) |
-| 3 | Admin ontvangt een mail bij elke nieuwe registratie |
-| 4 | Chauffeurs kunnen worden verwijderd of geblokkeerd |
-| 5 | Overzicht houden en database beheren |
-| 6 | Routes en ritten beheren |
-| 7 | Meldingen sturen naar chauffeurs |
+| 1 | Admin login page |
+| 2 | Manage drivers (CRUD: create, view, edit, delete) |
+| 3 | Admin receives an email for every new registration |
+| 4 | Drivers can be deleted or blocked |
+| 5 | Maintain overview and manage the database |
+| 6 | Manage routes and trips |
+| 7 | Send notifications to drivers |
 
 ---
 
-### 🎨 Darryl Kasandinomo — UI & Navigatie
-| # | Taak |
+### Darryl Kasandinomo — UI & Navigation
+| # | Task |
 |---|---|
-| 1 | Tabs en navigatie — Home / Over Ons / Contact / FAQ / Registreer |
-| 2 | Gebruiksvriendelijk ontwerp voor ouders én chauffeurs |
-| 3 | Ouders kunnen chauffeurs bekijken zónder account |
-| 4 | Admin kan gegevens van ouders controleren |
-| 5 | Dark mode / Light mode toggle switch |
-| 6 | Responsive design — mobiel en desktop |
-| 7 | Scroll-reveal animaties per sectie |
+| 1 | Tabs and navigation — Home / About / Contact / FAQ / Register |
+| 2 | User-friendly design for both parents and drivers |
+| 3 | Parents can view drivers without an account |
+| 4 | Admin can verify parent information |
+| 5 | Dark mode / Light mode toggle |
+| 6 | Responsive design — mobile and desktop |
+| 7 | Scroll-reveal animations per section |
 | 8 | FAQ accordion |
 
 ---
 
-### 🗄️ Adney Dayen — Database, SQL & Meldingen
-| # | Taak |
+### Adney Dayen — Database, SQL & Notifications
+| # | Task |
 |---|---|
-| 1 | MySQL database opzetten en beheren |
-| 2 | Data van chauffeurs en ouders veilig opslaan in de juiste tabellen |
-| 3 | SQL tabellen onderhouden |
-| 4 | Chauffeurs ontvangen aanvragen van ouders |
-| 5 | Bevestiging van abonnement via e-mail |
-| 6 | Ouders ontvangen melding wanneer de bus is gearriveerd |
-| 7 | Bevestiging van aanvraag via e-mail voor ouders |
+| 1 | Set up and manage MySQL database |
+| 2 | Securely store driver and parent data in the correct tables |
+| 3 | Maintain SQL tables |
+| 4 | Drivers receive requests from parents |
+| 5 | Subscription confirmation via email |
+| 6 | Parents receive a notification when the bus has arrived |
+| 7 | Request confirmation via email for parents |
 
 ---
 
-### 📍 Shemar Dipotaroeno — GPS & Live Tracker
-| # | Taak |
+### Shemar Dipotaroeno — GPS & Live Tracker
+| # | Task |
 |---|---|
-| 1 | GPS / live tracker implementeren |
-| 2 | Chauffeur kan locatietoegang inschakelen |
-| 3 | Ouders kunnen live locatie van de schoolbus bekijken |
-| 4 | Ouders kunnen zoeken/filteren op route of locatie |
-| 5 | Admin kan live tracker monitoren |
-| 6 | Admin kan locaties bekijken |
-| 7 | Mobiel en desktop toegankelijk |
+| 1 | Implement GPS / live tracker |
+| 2 | Driver can enable location access |
+| 3 | Parents can view the live location of the school bus |
+| 4 | Parents can search/filter by route or location |
+| 5 | Admin can monitor the live tracker |
+| 6 | Admin can view locations |
+| 7 | Accessible on mobile and desktop |
 
 ---
 
-## ⚙️ Installatie & Setup
+## GitHub Workflow (branches)
 
-### Vereisten (iedereen)
-```bash
-# 1. Node.js installeren — https://nodejs.org
-node -v
-
-# 2. Git installeren en configureren
-git config --global user.name "Jouw Naam"
-git config --global user.email "jouw@email.com"
-
-# 3. MySQL installeren — https://dev.mysql.com/downloads/
-
-# 4. Visual Studio Code + Live Server extensie installeren
-```
-
-### Project starten
-```bash
-# Clone de repository
-git clone https://github.com/<gebruikersnaam>/busconnect.git
-cd busconnect
-
-# Installeer dependencies
-npm install
-
-# Start de server
-node server.js
-```
-
-Open je browser op `http://localhost:3000`
-
----
-
-## 🔀 GitHub Workflow (branches)
-
-Elk teamlid werkt op een **eigen branch** en dient een Pull Request in zodat de teamleider kan mergen naar `main`.
+Each team member works on their **own branch** and submits a Pull Request so the team leader can merge into `main`.
 
 ```bash
-# Maak jouw branch aan (eenmalig)
-git checkout -b jouw-naam
+# Create your branch (once)
+git checkout -b your-name
 
-# Wijzigingen opslaan en pushen
+# Save and push changes
 git add .
-git commit -m "feat: korte beschrijving van wat je hebt gedaan"
-git push origin jouw-naam
+git commit -m "feat: short description of what you did"
+git push origin your-name
 ```
 
-### Branch overzicht
-| Branch | Eigenaar |
+### Branch overview
+| Branch | Owner |
 |---|---|
-| `main` | Teamleider — alleen via Pull Request |
-| `ngaisa-basedie` | Registratie & Profiel |
-| `shriyanie-debi-tewari` | Admin & Beheer |
-| `darryl-kasandinomo` | UI & Navigatie |
-| `adney-dayen` | Database & Meldingen |
+| `main` | Team leader — via Pull Request only |
+| `ngaisa-basedie` | Registration & Profile |
+| `shriyanie-debi-tewari` | Admin & Management |
+| `darryl-kasandinomo` | UI & Navigation |
+| `adney-dayen` | Database & Notifications |
 | `shemar-dipotaroeno` | GPS & Tracker |
 
 ---
 
-## 📁 Bestandsstructuur
+## File Structure
 
 ```
 busconnect/
-├── index.html          # Hoofdpagina (SPA)
-├── main.css            # Alle styling
-├── main.js             # Navigatie, dark mode, FAQ, formulieren
-├── server.js           # Node.js backend
+├── index.html          # Main page (SPA)
+├── main.css            # All styles
+├── main.js             # Navigation, dark mode, FAQ, forms
+├── server.js           # Node.js backend (Express + Socket.IO)
 ├── package.json        # Dependencies
-├── buslogo.png         # Logo
-├── bus.png             # Favicon / icoon
-└── README.md           # Dit bestand
+├── .env.example        # Environment variables template
+├── config/
+│   └── db.js           # MySQL connection pool
+├── routes/
+│   ├── auth.js         # JWT authentication endpoints
+│   ├── drivers.js      # Driver registration & listing (SQL)
+│   ├── contact.js      # Contact form (SQL)
+│   └── tracker.js      # Bus route history (SQL)
+├── middlewares/
+│   ├── auth.js         # JWT verification middleware
+│   └── validate.js     # Request body validation
+├── img/
+│   ├── bus.png         # Bus icon
+│   ├── buslogo.png     # App logo
+│   └── buslogo.svg     # App logo (SVG)
+└── README.md           # This file
 ```
 
 ---
 
-## 🌐 Functionele eisen — samenvatting
+## Functional Requirements — Summary
 
-### Algemeen
-- Gebruiksvriendelijk op mobiel én desktop
-- Iedereen heeft Node.js, VS Code, Git en MySQL geïnstalleerd
+### General
+- User-friendly on both mobile and desktop
+- All team members have Node.js, VS Code, Git, and MySQL installed
 
-### Voor chauffeurs
-- Registreren, profiel aanmaken, foto uploaden
-- Route en werkervaring toevoegen
-- GPS inschakelen voor live tracking
+### For Drivers
+- Register, create a profile, upload a photo
+- Add route and work experience
+- Enable GPS for live tracking
 
-### Voor ouders
-- Chauffeurs bekijken zonder account
-- Filteren op school, wijk en beschikbaarheid
-- Live locatie van de bus volgen
-- Contact opnemen en bevestiging ontvangen
+### For Parents
+- View drivers without an account
+- Filter by school, neighborhood, and availability
+- Follow the live location of the bus
+- Contact drivers and receive confirmation
 
-### Voor de admin
-- Inloggen en gebruikers beheren (CRUD)
-- Meldingen sturen, routes beheren
-- Live tracker monitoren
+### For the Admin
+- Log in and manage users (CRUD)
+- Send notifications, manage routes
+- Monitor the live tracker
 
 ---
 
-## 📚 Bronnen
+## Sources
 
-- [GFC Nieuws Suriname — Schoolvervoer](https://www.gfcnieuws.com/schoolvervoer-blijft-een-bron-van-zorgen-in-suriname/)
+- [GFC News Suriname — School Transport](https://www.gfcnieuws.com/schoolvervoer-blijft-een-bron-van-zorgen-in-suriname/)
 - [UNASAT](https://unasat.ngineerlab.com/)
 - [MorningBus](https://morningbus.com/)
 - [BusWhere](https://www.buswhere.com/)
@@ -209,4 +281,4 @@ busconnect/
 
 ---
 
-*© 2026 BusConnect — The Element 3 · UNASAT · Paramaribo, Suriname 🇸🇷*
+*© 2026 BusConnect — The Element 3 · UNASAT · Paramaribo, Suriname*
