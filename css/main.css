@@ -1589,9 +1589,26 @@ nav {
 }
 
 /* ─── 26. RESPONSIVE ─── */
+
+/* ── Tablet landscape + large tablet (≤1024px) ── */
+@media (max-width: 1024px) {
+	.driver-grid {
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	}
+}
+
+/* ── Tablet portrait (≤900px) ── */
 @media (max-width: 900px) {
 	.nav-center { display: none; }
 	.nav__hamburger { display: flex; }
+
+	.section {
+		padding: 3rem 1.5rem;
+	}
+
+	.hero {
+		padding: 4rem 1.5rem 3rem;
+	}
 
 	.contact-grid {
 		grid-template-columns: 1fr;
@@ -1610,17 +1627,92 @@ nav {
 	}
 
 	.role-btn-grid {
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.tracker-topbar {
+		flex-wrap: wrap;
 	}
 }
 
+/* ── Tablet small + large phones (≤768px) ── */
+@media (max-width: 768px) {
+	.role-btn-grid {
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+	}
+
+	.tracker-role-card {
+		padding: 1.5rem 1.25rem;
+	}
+
+	.filter-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.form-grid.cols-3 {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.modal {
+		max-width: 100%;
+	}
+
+	.modal-body {
+		padding: 1.25rem;
+	}
+
+	.modal-actions {
+		padding: 0.75rem 1.25rem 1.25rem;
+		flex-wrap: wrap;
+	}
+
+	.contact-grid {
+		grid-template-columns: 1fr;
+	}
+
+	/* Prevent iOS from zooming in on input focus */
+	.form-field input,
+	.form-field select,
+	.form-field textarea,
+	.field input,
+	.field select {
+		font-size: 16px;
+	}
+}
+
+/* ── Phone (≤640px) ── */
 @media (max-width: 640px) {
 	nav {
 		padding: 0 1rem;
 	}
 
+	.nav-logo {
+		font-size: 1.1rem;
+	}
+
 	.hero {
-		padding: 3.5rem 1.25rem 3rem;
+		padding: 3rem 1.25rem 2.5rem;
+	}
+
+	.hero-logo {
+		width: 80px;
+		height: 80px;
+	}
+
+	.hero p {
+		font-size: 0.95rem;
+	}
+
+	.hero-actions {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.hero-actions .btn {
+		width: 100%;
+		max-width: 320px;
+		justify-content: center;
 	}
 
 	.section {
@@ -1631,14 +1723,19 @@ nav {
 		grid-template-columns: 1fr;
 	}
 
+	.filter-actions {
+		flex-direction: column;
+	}
+
+	.filter-actions .btn {
+		width: 100%;
+	}
+
 	.driver-grid {
 		grid-template-columns: 1fr;
 	}
 
-	.form-grid {
-		grid-template-columns: 1fr;
-	}
-
+	.form-grid,
 	.form-grid.cols-3 {
 		grid-template-columns: 1fr;
 	}
@@ -1647,8 +1744,36 @@ nav {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
+	.role-btn-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.modal-overlay {
+		align-items: flex-end;
+		padding: 0;
+	}
+
+	.modal {
+		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+		max-height: 92vh;
+	}
+
+	.modal-body {
+		padding: 1rem;
+	}
+
+	.modal-header {
+		padding: 1rem 1.25rem;
+	}
+
 	.modal-actions {
 		flex-direction: column;
+		padding: 0.75rem 1rem 1.5rem;
+	}
+
+	.modal-actions .btn {
+		width: 100%;
+		justify-content: center;
 	}
 
 	.footer__bottom {
@@ -1659,9 +1784,79 @@ nav {
 	.tracker-topbar {
 		flex-direction: column;
 		align-items: flex-start;
+		gap: 0.5rem;
 	}
 
 	#tracker-map {
 		height: 280px;
+	}
+
+	.tracker-toast {
+		left: 1rem;
+		right: 1rem;
+		transform: translateX(0) translateY(80px);
+		border-radius: var(--radius-lg);
+		white-space: normal;
+		max-width: none;
+	}
+
+	.tracker-toast.toast-visible {
+		transform: translateX(0) translateY(0);
+	}
+
+	.map-legend {
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	/* Ensure tap targets are large enough */
+	.mobile-menu a {
+		padding: 1rem;
+		min-height: 48px;
+		display: flex;
+		align-items: center;
+	}
+
+	.btn {
+		min-height: 44px;
+	}
+
+	.faq-question {
+		padding: 1rem;
+		min-height: 48px;
+	}
+}
+
+/* ── Very small phones (≤480px) ── */
+@media (max-width: 480px) {
+	.tracker-info-row {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.hero-logo {
+		width: 70px;
+		height: 70px;
+	}
+
+	.hero h1 {
+		font-size: 1.75rem;
+	}
+
+	.section-header h2 {
+		font-size: 1.4rem;
+	}
+
+	.nav-logo img {
+		height: 28px;
+		width: 28px;
+	}
+
+	.driver-card-top {
+		padding: 1rem 1rem 0;
+	}
+
+	.driver-card-body,
+	.driver-card-footer {
+		padding: 0.85rem 1rem;
 	}
 }
