@@ -4,10 +4,10 @@ require('dotenv').config();
 
 const express    = require('express');
 const cors       = require('cors');
-const mysql      = require('mysql2');
 const http       = require('http');
 const { Server } = require('socket.io');
 const path       = require('path');
+const db         = require('./config/db');
 
 const app        = express();
 const httpServer = http.createServer(app);
@@ -20,71 +20,62 @@ app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
-// ── DATABASE ──────────────────────────────────────────────────
-const db = mysql.createConnection({
-    host:     process.env.DB_HOST     || 'localhost',
-    user:     process.env.DB_USER     || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME     || 'busconnect'
+// ── DATABASE: auto-create tables on startup ───────────────────
+const tables = [
+    `CREATE TABLE IF NOT EXISTS drivers (
+        user_id           INT AUTO_INCREMENT PRIMARY KEY,
+        voornaam          VARCHAR(100) NOT NULL,
+        achternaam        VARCHAR(100) NOT NULL,
+        email             VARCHAR(200) UNIQUE NOT NULL,
+        telefoon          VARCHAR(50),
+        profile_photo_url LONGTEXT,
+        rijbewijs         VARCHAR(10),
+        ervaring          INT DEFAULT 0,
+        voertuig          VARCHAR(100),
+        capaciteit        INT,
+        kentekenplaat     VARCHAR(20),
+        bouwjaar          INT,
+        route             VARCHAR(50),
+        school            VARCHAR(100),
+        tijd_och          VARCHAR(10),
+        tijd_mid          VARCHAR(10),
+        dag               VARCHAR(50),
+        prijs             INT DEFAULT 0,
+        op_afhaal         VARCHAR(50),
+        created_at        DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS contact_messages (
+        id                 INT AUTO_INCREMENT PRIMARY KEY,
+        contact_name       VARCHAR(100),
+        contact_achternaam VARCHAR(100),
+        contact_email      VARCHAR(200),
+        contact_subject    VARCHAR(200),
+        contact_message    TEXT,
+        created_at         DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS bus_locations (
+        id          INT AUTO_INCREMENT PRIMARY KEY,
+        bus_id      VARCHAR(50),
+        latitude    DECIMAL(10, 8),
+        longitude   DECIMAL(11, 8),
+        recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`
+];
+
+tables.forEach(sql => {
+    db.query(sql, err => {
+        if (err) console.error('Table init error:', err.message);
+    });
 });
 
-db.connect(err => {
+db.getConnection((err, connection) => {
     if (err) {
         console.error('Database connection failed:', err.message);
-        return;
+    } else {
+        console.log('Connected to MySQL database.');
+        connection.release();
     }
-    console.log('Connected to MySQL database.');
-    initDatabase();
 });
-
-function initDatabase() {
-    const tables = [
-        `CREATE TABLE IF NOT EXISTS drivers (
-            user_id           INT AUTO_INCREMENT PRIMARY KEY,
-            voornaam          VARCHAR(100) NOT NULL,
-            achternaam        VARCHAR(100) NOT NULL,
-            email             VARCHAR(200) UNIQUE NOT NULL,
-            telefoon          VARCHAR(50),
-            profile_photo_url LONGTEXT,
-            rijbewijs         VARCHAR(10),
-            ervaring          INT DEFAULT 0,
-            voertuig          VARCHAR(100),
-            capaciteit        INT,
-            kentekenplaat     VARCHAR(20),
-            bouwjaar          INT,
-            route             VARCHAR(50),
-            school            VARCHAR(100),
-            tijd_och          VARCHAR(10),
-            tijd_mid          VARCHAR(10),
-            dag               VARCHAR(50),
-            prijs             INT DEFAULT 0,
-            op_afhaal         VARCHAR(50),
-            created_at        DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`,
-        `CREATE TABLE IF NOT EXISTS contact_messages (
-            id                 INT AUTO_INCREMENT PRIMARY KEY,
-            contact_name       VARCHAR(100),
-            contact_achternaam VARCHAR(100),
-            contact_email      VARCHAR(200),
-            contact_subject    VARCHAR(200),
-            contact_message    TEXT,
-            created_at         DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`,
-        `CREATE TABLE IF NOT EXISTS bus_locations (
-            id          INT AUTO_INCREMENT PRIMARY KEY,
-            bus_id      VARCHAR(50),
-            latitude    DECIMAL(10, 8),
-            longitude   DECIMAL(11, 8),
-            recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`
-    ];
-
-    tables.forEach(sql => {
-        db.query(sql, err => {
-            if (err) console.error('Table init error:', err.message);
-        });
-    });
-}
 
 // ── SOCKET.IO — REALTIME BUS TRACKER ─────────────────────────
 const activeBuses = new Map();
