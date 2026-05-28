@@ -68,20 +68,20 @@ CREATE TABLE IF NOT EXISTS admins (
 -- ── Seed data ─────────────────────────────────────────────────
 
 -- Admin accounts (passwords are bcrypt hashes of 'admin123')
-INSERT IGNORE INTO admins (email, password) VALUES
-('admin@busconnect.sr',  '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW'),
-('manager@busconnect.sr','$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW');
+INSERT INTO admins (email, password) VALUES
+('admin@busconnect.sr',   '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW'),
+('manager@busconnect.sr', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW');
 
 -- Sample driver users
-INSERT IGNORE INTO users (voornaam, achternaam, email, telefoon) VALUES
+INSERT INTO users (voornaam, achternaam, email, telefoon) VALUES
 ('Jan',    'Smit',        'jan.smit@example.com',      '+5970000001'),
 ('Maria',  'de Vries',    'maria.devries@example.com', '+5970000002'),
 ('Carlos', 'Brunings',    'carlos.b@example.com',      '+5970000003'),
 ('Priya',  'Ramkhelawan', 'priya.r@example.com',       '+5970000004'),
 ('Devon',  'Amoida',      'devon.a@example.com',       '+5970000005');
 
--- Vehicle information per driver (user_id 1–5)
-INSERT IGNORE INTO voertuigen (user_id, rijbewijs, ervaring, voertuig, capaciteit, kentekenplaat, bouwjaar) VALUES
+-- Vehicle information per driver
+INSERT INTO voertuigen (user_id, rijbewijs, ervaring, voertuig, capaciteit, kentekenplaat, bouwjaar) VALUES
 (1, 'B', 5,  'Minibus',   8,  'SR-1234', 2018),
 (2, 'D', 8,  'Schoolbus', 22, 'SR-5678', 2020),
 (3, 'B', 3,  'Minibus',   10, 'SR-9101', 2019),
@@ -89,21 +89,21 @@ INSERT IGNORE INTO voertuigen (user_id, rijbewijs, ervaring, voertuig, capacitei
 (5, 'B', 6,  'Minibus',   12, 'SR-3141', 2021);
 
 -- School and route details per driver
-INSERT IGNORE INTO school_details (user_id, route, school, tijd_och, tijd_mid, dag, prijs, op_afhaal) VALUES
-(1, 'Noord',   'O.S. Flora',     '07:00', '13:00', 'Maandag-Vrijdag',   150.00, 'Thuis'),
-(2, 'Zuid',    'HAVO Karmel',    '06:45', '13:30', 'Maandag-Vrijdag',   180.00, 'Hoek'),
-(3, 'Oost',    'LTS Nickerie',   '07:15', '14:00', 'Maandag-Vrijdag',   130.00, 'Thuis'),
-(4, 'West',    'VOJ Paramaribo', '06:30', '13:00', 'Maandag-Vrijdag',   200.00, 'Bushalte'),
-(5, 'Centrum', 'O.S. Tammenga', '07:00', '12:30', 'Maandag-Zaterdag',  160.00, 'Thuis');
+INSERT INTO school_details (user_id, route, school, tijd_och, tijd_mid, dag, prijs, op_afhaal) VALUES
+(1, 'Noord',   'O.S. Flora',     '07:00', '13:00', 'Maandag-Vrijdag',  150.00, 'Thuis'),
+(2, 'Zuid',    'HAVO Karmel',    '06:45', '13:30', 'Maandag-Vrijdag',  180.00, 'Hoek'),
+(3, 'Oost',    'LTS Nickerie',   '07:15', '14:00', 'Maandag-Vrijdag',  130.00, 'Thuis'),
+(4, 'West',    'VOJ Paramaribo', '06:30', '13:00', 'Maandag-Vrijdag',  200.00, 'Bushalte'),
+(5, 'Centrum', 'O.S. Tammenga', '07:00', '12:30', 'Maandag-Zaterdag', 160.00, 'Thuis');
 
 -- Sample job applications
-INSERT IGNORE INTO job_applications (user_id, applied_email, applied_phone) VALUES
+INSERT INTO job_applications (user_id, applied_email, applied_phone) VALUES
 (1, 'jan.smit@example.com',      '+5970000001'),
 (2, 'maria.devries@example.com', '+5970000002'),
 (3, 'carlos.b@example.com',      '+5970000003');
 
 -- Sample contact messages
-INSERT IGNORE INTO contact_messages (name, achternaam, email, subject, message) VALUES
-('Aisha',  'Jansen',     'aisha.j@example.com',  'Beschikbaarheid',     'Ik wil weten of er plek is op de route Noord voor mijn dochter.'),
-('Ravi',   'Soerdjbali', 'ravi.s@example.com',   'Prijzen',             'Wat zijn de kosten voor twee kinderen op dezelfde route?'),
-('Sandra', 'Pengel',     'sandra.p@example.com', 'Technisch probleem',  'De tracker werkt niet goed op mijn telefoon.');
+INSERT INTO contact_messages (name, achternaam, email, subject, message) VALUES
+('Aisha',  'Jansen',     'aisha.j@example.com',  'Beschikbaarheid',    'Ik wil weten of er plek is op de route Noord voor mijn dochter.'),
+('Ravi',   'Soerdjbali', 'ravi.s@example.com',   'Prijzen',            'Wat zijn de kosten voor twee kinderen op dezelfde route?'),
+('Sandra', 'Pengel',     'sandra.p@example.com', 'Technisch probleem', 'De tracker werkt niet goed op mijn telefoon.');
